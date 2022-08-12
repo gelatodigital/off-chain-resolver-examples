@@ -1,4 +1,4 @@
-# Examples of Polywrap Resolver
+# Polywrap Resolver Examples
 
 ### simple-resolver
 
