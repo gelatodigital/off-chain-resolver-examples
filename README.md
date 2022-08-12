@@ -4,7 +4,7 @@
 
 Increases a counter on a smart contract every x minutes.
 
-### 1inch-polywrap-resolver
+### 1inch-resolver
 
 Swaps token via 1inch router when token price is above a certain threshold.
 
