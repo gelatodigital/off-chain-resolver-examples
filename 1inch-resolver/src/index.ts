@@ -20,7 +20,7 @@ export function checker(args: Args_checker): CheckerResult {
   let minToTokenAmount = userArgs.minToTokenAmount;
   let fromTokenAddress = userArgs.fromTokenAddress;
   let toTokenAddress = userArgs.toTokenAddress;
-  let resolverAddress = userArgs.resolverAddress;
+  let targetAddress = userArgs.targetAddress;
   let gasPrice = gelatoArgs.gasPrice;
 
   logInfo(`chainId: ${chainId}`);
@@ -28,7 +28,7 @@ export function checker(args: Args_checker): CheckerResult {
   logInfo(`minToTokenAmount: ${minToTokenAmount}`);
   logInfo(`fromTokenAddress: ${fromTokenAddress}`);
   logInfo(`toTokenAddress: ${toTokenAddress}`);
-  logInfo(`resolverAddress: ${resolverAddress}`);
+  logInfo(`targetAddress: ${targetAddress}`);
   let canExec = false;
 
   let routerAddress = getRouterAddress(chainId);
@@ -52,7 +52,7 @@ export function checker(args: Args_checker): CheckerResult {
     fromTokenAddress,
     toTokenAddress,
     fromTokenAmount,
-    resolverAddress
+    targetAddress
   );
 
   /*   
@@ -72,8 +72,6 @@ export function checker(args: Args_checker): CheckerResult {
 }
 
 function getRouterAddress(chainId: string): string {
-  return "0x1111111254fb6c44bac0bed2854e76f90643097d";
-
   let routerApi = `https://api.1inch.io/v4.0/${chainId}/approve/spender`;
   let routerApiRes = Http_Module.get({
     request: null,
@@ -100,8 +98,6 @@ function getApproveFromTokenData(
   fromTokenAddress: string,
   fromTokenAmount: BigInt
 ): string {
-  return "0x095ea7b30000000000000000000000001111111254fb6c44bac0bed2854e76f90643097d000000000000000000000000000000000000000000000000000009184e72a000";
-
   let approveApi = `https://api.1inch.io/v4.0/${chainId}/approve/transaction?tokenAddress=${fromTokenAddress}&amount=${fromTokenAmount.toString()}`;
   let approveApiRes = Http_Module.get({
     request: null,
@@ -163,10 +159,10 @@ function getSwapData(
   fromTokenAddress: string,
   toTokenAddress: string,
   fromTokenAmount: BigInt,
-  resolverAddress: string
+  targetAddress: string
 ): string {
   let slippage = "3";
-  let swapApi = `https://api.1inch.io/v4.0/${chainId}/swap?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${fromTokenAmount}&fromAddress=${resolverAddress}&slippage=${slippage}`;
+  let swapApi = `https://api.1inch.io/v4.0/${chainId}/swap?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${fromTokenAmount}&fromAddress=${targetAddress}&slippage=${slippage}`;
 
   let res = Http_Module.get({
     request: null,

@@ -26,7 +26,7 @@ type UserArgs {
   minToTokenAmount: BigInt!
   fromTokenAddress: String!
   toTokenAddress: String!
-  resolverAddress: String!
+  targetAddress: String!
 }
 
 type GelatoArgs {
