@@ -6,7 +6,7 @@ import { dateTimePlugin } from "polywrap-datetime-plugin";
 const env = process.env;
 
 const getPolywrapClient = (): PolywrapClient => {
-  const chain = env.CHAIN ?? "testnet";
+  const chain = env.CHAINID ?? "testnet";
   const provider = env.RPC_URL!;
 
   const polywrapClient = new PolywrapClient({

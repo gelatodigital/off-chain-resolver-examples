@@ -1,11 +1,6 @@
 {
   "compilerOptions": {
-    "lib": [
-      "es2020",
-      "es2015",
-      "es5",
-      "dom"
-    ],
+    "lib": ["es2020", "es2015", "es5", "dom"],
     "esModuleInterop": true,
     "outDir": "build",
     "moduleResolution": "node",
@@ -22,7 +17,8 @@
     "sourceMap": true,
     "target": "es5",
     "resolveJsonModule": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "downlevelIteration": true
   },
-  "typeAcquisition": { "include": ["jest"] },
+  "typeAcquisition": { "include": ["jest"] }
 }
