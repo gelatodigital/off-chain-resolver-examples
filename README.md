@@ -23,7 +23,7 @@ Swaps token via 1inch router when token price is above a certain threshold.
 
 1. Create a `.env` file with configs:
 
-```
+```js
 CHAINID=
 RPC_URL=
 ```
@@ -44,21 +44,20 @@ Polywrap feature is currently on these networks:
 
 1. Create a `.env` file with configs:
 
-```
+```js
 RPC_URL= <= for network listed above
 PK=
 ```
 
 2. Fill up the details in `/scripts/createTask.ts`
 
-```
-  const execAddress = ""; // target contract which gelato will call
-  const execDataOrSelector = ""; // signature of function which gelato will call
-  const userArgs = {
-    arg: "", // user arguments defined in schema
-  };
-  const polywrapCid = ""; // deployed polywrap hash
-
+```js
+const execAddress = ""; // target contract which gelato will call
+const execDataOrSelector = ""; // signature of function which gelato will call
+const userArgs = {
+  arg: "", // user arguments defined in schema
+};
+const polywrapCid = ""; // deployed polywrap hash
 ```
 
 3. `yarn createTask`
