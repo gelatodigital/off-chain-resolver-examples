@@ -1,4 +1,4 @@
-# (BETA) Polywrap Resolver Examples
+# (BETA) Offchain Resolver Examples
 
 ### simple-resolver
 
@@ -32,13 +32,13 @@ RPC_URL=
 
 `yarn test`
 
-## Deploy Polywrap
+## Deploy Off-chain Resolver
 
 `yarn deploy`
 
 ## Creating a task
 
-Polywrap feature is currently on these networks:
+Off-chain Resolver feature is currently on these networks:
 
 - mumbai
 
@@ -57,7 +57,7 @@ const execDataOrSelector = ""; // signature of function which gelato will call
 const userArgs = {
   arg: "", // user arguments defined in schema
 };
-const polywrapCid = ""; // deployed polywrap hash
+const polywrapCid = ""; // deployed off-chain resolver hash
 ```
 
 3. `yarn createTask`
