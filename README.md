@@ -1,14 +1,12 @@
-# (BETA) Offchain Resolver Examples
+# (BETA) Gelato Off-chain Resolver Examples
 
-### simple-resolver
+### counter-resolver
 
 Increases a counter on a smart contract every x minutes.
 
 ### 1inch-resolver
 
 Swaps token via 1inch router when token price is above a certain threshold.
-
-# How To Run
 
 ## Install Dependencies
 
@@ -21,45 +19,11 @@ Swaps token via 1inch router when token price is above a certain threshold.
 
 ## Test
 
-1. Create a `.env` file with configs:
+Create a `.env` file with configs:
 
-```js
+```typescript
 CHAINID=
 RPC_URL=
 ```
 
-2. Configure user arguments in `src/__tests__/e2e/integration.spec.ts` and run:
-
 `yarn test`
-
-## Deploy Off-chain Resolver
-
-`yarn deploy`
-
-## Creating a task
-
-Off-chain Resolver feature is currently on these networks:
-
-- mumbai
-
-1. Create a `.env` file with configs:
-
-```js
-RPC_URL= <= for network listed above
-PK=
-```
-
-2. Fill up the details in `/scripts/createTask.ts`
-
-```js
-const execAddress = ""; // target contract which gelato will call
-const execDataOrSelector = ""; // signature of function which gelato will call
-const userArgs = {
-  arg: "", // user arguments defined in schema
-};
-const polywrapCid = ""; // deployed off-chain resolver hash
-```
-
-3. `yarn createTask`
-
-Since this feature is still in BETA, please reach out to us once the task is created, we will need to whitelist the task :)

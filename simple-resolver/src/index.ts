@@ -14,38 +14,46 @@ export function checker(args: Args_checker): CheckerResult {
   let gelatoArgs = GelatoArgs.fromBuffer(args.gelatoArgsBuffer);
 
   let counterAddress = userArgs.counterAddress;
+  let count = userArgs.count;
   let gasPrice = gelatoArgs.gasPrice;
-  let timeNowMs = Time_Module.currentTimestamp({}).unwrap();
+  let timeNowSec = Time_Module.currentTimestamp({}).unwrap();
 
-  let canExec = false;
-
-  logInfo(`timeNowMs: ${timeNowMs}`);
+  logInfo(`timeNowSec: ${timeNowSec}`);
   logInfo(`gasPrice: ${gasPrice}`);
   logInfo(`counterAddress: ${counterAddress}`);
 
-  const lastExecuted = Ethereum_Module.callContractView({
+  let lastExecutedString = Ethereum_Module.callContractView({
     address: counterAddress,
     method: "function lastExecuted() external view returns(uint256)",
     args: null,
     connection: args.connection,
   }).unwrap();
 
-  let lastExecutedMs = BigInt.fromString(lastExecuted + "000");
-  let fiveMinsMs = BigInt.fromString("300000");
-  let nextExecTime = lastExecutedMs.add(fiveMinsMs);
+  let lastExecuted = BigInt.fromString(lastExecutedString);
+  let fiveMin = BigInt.fromString("300");
+  let nextExecTime = lastExecuted.add(fiveMin);
 
   logInfo(
     `counterAddress: ${counterAddress}, lastExecuted: ${lastExecuted.toString()},`
   );
 
-  if (timeNow.gte(nextExecTime)) canExec = true;
+  if (timeNowSec.gte(nextExecTime)) {
+    let execData = Ethereum_Module.encodeFunction({
+      method: "function increaseCount(uint256)",
+      args: [count.toString()],
+    }).unwrap();
 
-  const execData = Ethereum_Module.encodeFunction({
-    method: "function increaseCount(uint256)",
-    args: ["1"],
+    return { canExec: true, execData };
+  }
+
+  let execData = Ethereum_Module.solidityPack({
+    types: ["string"],
+    values: [
+      `nextExecTime: ${nextExecTime.toString()}, timeNow: ${timeNowSec.toString()}`,
+    ],
   }).unwrap();
 
-  return { canExec, execData: execData };
+  return { canExec: false, execData };
 }
 
 function logInfo(msg: string): void {

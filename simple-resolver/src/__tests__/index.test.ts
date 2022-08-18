@@ -1,45 +1,44 @@
 import { encode } from "@msgpack/msgpack";
 import "dotenv/config";
-import { Contract, ethers } from "ethers";
+import { ethers } from "ethers";
 import path from "path";
-import { Template_CheckerResult } from "../types/wrap";
-import { UserArgs } from "../../wrap/UserArgs";
-import polywrapClient from "./client";
+import { Template_CheckerResult } from "./types/wrap";
+import client from "./utils/client";
 
 jest.setTimeout(60000);
 
 const counterAbi = ["function increaseCount(uint256) external"];
 const counterAddress = "0x04bDBB7eF8C17117d8Ef884029c268b7BecB2a19"; //mumbai
+const counterInterface = new ethers.utils.Interface(counterAbi);
 
 describe("Gelato simple resolver test", () => {
   let wrapperUri: string;
   let userArgsBuffer: Uint8Array;
   let gelatoArgsBuffer: Uint8Array;
   let expected: Template_CheckerResult;
-  let checker: Contract;
 
   beforeAll(async () => {
     const dirname: string = path.resolve(__dirname);
-    const wrapperPath: string = path.join(dirname, "..", "..", "..");
+    const wrapperPath: string = path.join(dirname, "..", "..");
     wrapperUri = `fs/${wrapperPath}/build`;
 
     const gelatoArgs = {
       gasPrice: ethers.utils.parseUnits("100", "gwei").toString(),
-      futureArgs: 123,
-    };
-    const userArgs: UserArgs = {
-      counterAddress,
     };
 
-    checker = new ethers.Contract(counterAddress, counterAbi);
+    const userArgs = {
+      counterAddress,
+      count: "5",
+    };
 
     userArgsBuffer = encode(userArgs);
     gelatoArgsBuffer = encode(gelatoArgs);
 
-    const expectedExecData = checker.interface.encodeFunctionData(
+    const expectedExecData = counterInterface.encodeFunctionData(
       "increaseCount",
-      [1]
+      [5]
     );
+
     expected = {
       canExec: true,
       execData: expectedExecData,
@@ -47,7 +46,7 @@ describe("Gelato simple resolver test", () => {
   });
 
   it("calls checker", async () => {
-    const job = await polywrapClient.invoke({
+    const job = await client.invoke({
       uri: wrapperUri,
       method: "checker",
       args: {

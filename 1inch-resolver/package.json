@@ -1,6 +1,6 @@
 {
-  "name": "1inch-resolver",
-  "description": "Gelato 1inch polywrap resolver example",
+  "name": "off-chain-resolver-template",
+  "description": "Gelato off-chain resolver template",
   "private": true,
   "version": "0.3.0",
   "scripts": {
@@ -16,7 +16,7 @@
     "test:workflow": "npx polywrap run -o ./workflows/output.json -v ./workflows/validator.cue ./workflows/e2e.yaml",
     "format": "prettier --write '*/**/*.{js,sol,json,md,ts}'",
     "format:check": "prettier --check '*/**/*.{js,sol,json,md,ts}'",
-    "createTask": "ts-node scripts/createTask.ts"
+    "createTask": "ts-node src/scripts/createTask.ts"
   },
   "jest": {
     "transformIgnorePatterns": [
@@ -39,6 +39,6 @@
   },
   "dependencies": {
     "@polywrap/wasm-as": "0.3.0",
-    "polywrap-datetime-plugin": "^0.3.0"
+    "polywrap-datetime-plugin": "^0.3.1"
   }
 }

@@ -2,8 +2,7 @@ import { encode } from "@msgpack/msgpack";
 import "dotenv/config";
 import { ethers } from "ethers";
 import path from "path";
-import { Template_CheckerResult } from "../types/wrap";
-import polywrapClient from "./client";
+import client from "./utils/client";
 
 jest.setTimeout(600000);
 
@@ -19,7 +18,7 @@ describe("Gelato 1inch resolver test", () => {
 
   beforeAll(async () => {
     const dirname: string = path.resolve(__dirname);
-    const wrapperPath: string = path.join(dirname, "..", "..", "..");
+    const wrapperPath: string = path.join(dirname, "..", "..");
     wrapperUri = `fs/${wrapperPath}/build`;
 
     const gelatoArgs = {
@@ -31,7 +30,7 @@ describe("Gelato 1inch resolver test", () => {
       minToTokenAmount: ethers.utils.parseUnits("0.0001", "mwei").toString(),
       fromTokenAddress: POLYGON_WETH,
       toTokenAddress: POLYGON_USDC,
-      resolverAddress: POLYGON_TARGET,
+      targetAddress: POLYGON_TARGET,
     };
 
     userArgsBuffer = encode(userArgs);
@@ -39,7 +38,7 @@ describe("Gelato 1inch resolver test", () => {
   });
 
   it("calls checker", async () => {
-    const job = await polywrapClient.invoke({
+    const job = await client.invoke({
       uri: wrapperUri,
       method: "checker",
       args: {
@@ -48,9 +47,6 @@ describe("Gelato 1inch resolver test", () => {
       },
     });
 
-    const data = <Template_CheckerResult>job.data;
     console.log(job);
-
-    // expect(data?.canExec).toEqual(false);
   });
 });
