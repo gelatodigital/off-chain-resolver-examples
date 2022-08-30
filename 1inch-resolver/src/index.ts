@@ -22,6 +22,7 @@ export function checker(args: Args_checker): CheckerResult {
   let toTokenAddress = userArgs.toTokenAddress;
   let targetAddress = userArgs.targetAddress;
   let gasPrice = gelatoArgs.gasPrice;
+  let timeStamp = gelatoArgs.timeStamp;
 
   logInfo(`chainId: ${chainId}`);
   logInfo(`fromTokenAmount: ${fromTokenAmount}`);

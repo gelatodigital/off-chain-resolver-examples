@@ -24,6 +24,7 @@ describe("Gelato simple resolver test", () => {
 
     const gelatoArgs = {
       gasPrice: ethers.utils.parseUnits("100", "gwei").toString(),
+      timeStamp: Math.floor(Date.now() / 1000).toString(),
     };
 
     const userArgs = {

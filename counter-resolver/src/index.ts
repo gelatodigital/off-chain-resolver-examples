@@ -1,10 +1,5 @@
 import { BigInt } from "@polywrap/wasm-as";
-import {
-  Ethereum_Module,
-  Logger_Logger_LogLevel,
-  Logger_Module,
-  Time_Module,
-} from "./wrap";
+import { Ethereum_Module, Logger_Logger_LogLevel, Logger_Module } from "./wrap";
 import { Args_checker, CheckerResult } from "./wrap";
 import { GelatoArgs } from "./wrap/GelatoArgs";
 import { UserArgs } from "./wrap/UserArgs";
@@ -16,7 +11,7 @@ export function checker(args: Args_checker): CheckerResult {
   let counterAddress = userArgs.counterAddress;
   let count = userArgs.count;
   let gasPrice = gelatoArgs.gasPrice;
-  let timeNowSec = Time_Module.currentTimestamp({}).unwrap();
+  let timeNowSec = gelatoArgs.timeStamp;
 
   logInfo(`timeNowSec: ${timeNowSec}`);
   logInfo(`gasPrice: ${gasPrice}`);
