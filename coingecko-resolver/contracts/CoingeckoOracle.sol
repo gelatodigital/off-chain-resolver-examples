@@ -7,8 +7,6 @@ contract CoingeckoOracle {
 
     event PriceUpdated(uint256 indexed timeStamp, uint256 price);
 
-    receive() external payable {}
-
     function updatePrice(uint256 _price) external {
         ethUsdPrice = _price;
         lastUpdated = block.timestamp;
