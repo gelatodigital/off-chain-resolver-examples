@@ -18,14 +18,14 @@ const main = async () => {
   const ops = new GelatoOpsSDK(chainId, signer);
 
   const oracleAbi = ["function updatePrice(uint256) external"];
-  const oracleAddress = "0x18d60894309C4Ef4902655b445De1Cb2faf4CB40"; //mumbai
+  const oracleAddress = "0x18d60894309C4Ef4902655b445De1Cb2faf4CB40"; //matic
   const oracleInterface = new ethers.utils.Interface(oracleAbi);
 
-  const taskName = "Coingecko oracle"; // to fill
-  const execAddress = oracleAddress; // to fill
-  const execSelector = oracleInterface.getSighash("updatePrice"); // to fill
-  const offChainResolverHash = "QmQMTqeCiT17wEqZFZTpomHdPgQX4gy6Rv3uc5Xi7kyibM"; // to fill
-  const offChainResolverArgs = { oracleAddress }; // to fill
+  const taskName = "Coingecko oracle";
+  const execAddress = oracleAddress;
+  const execSelector = oracleInterface.getSighash("updatePrice");
+  const offChainResolverHash = "QmQMTqeCiT17wEqZFZTpomHdPgQX4gy6Rv3uc5Xi7kyibM";
+  const offChainResolverArgs = { oracleAddress };
 
   const res = await ops.createTask({
     name: taskName,
