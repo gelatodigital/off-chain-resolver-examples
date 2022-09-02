@@ -10,6 +10,10 @@ Increases a counter on a smart contract every x minutes.
 
 Swaps token via 1inch router when token price is above a certain threshold.
 
+### coingecko-resolver
+
+Updates eth-usd price on a oracle contract every x minutes.
+
 ## Install Dependencies
 
 `nvm install && nvm use`  
