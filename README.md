@@ -20,6 +20,7 @@ Updates eth-usd price on a oracle contract every x minutes.
 `yarn`
 
 ## Build
+Make sure to have `docker` running.
 
 `yarn build`
 
