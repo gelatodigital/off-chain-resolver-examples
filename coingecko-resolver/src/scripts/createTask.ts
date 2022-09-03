@@ -24,16 +24,19 @@ const main = async () => {
   const taskName = "Coingecko oracle";
   const execAddress = oracleAddress;
   const execSelector = oracleInterface.getSighash("updatePrice");
-  const offChainResolverHash = "QmQMTqeCiT17wEqZFZTpomHdPgQX4gy6Rv3uc5Xi7kyibM";
+  const offChainResolverHash = "QmaLcH6KdvNgJbrmUVCwAC7TkLenQtzAvt3bfpSMGSneXW";
   const offChainResolverArgs = { oracleAddress };
 
-  const res = await ops.createTask({
-    name: taskName,
-    execAddress,
-    execSelector,
-    offChainResolverHash,
-    offChainResolverArgs,
-  });
+  const res = await ops.createTask(
+    {
+      name: taskName,
+      execAddress,
+      execSelector,
+      offChainResolverHash,
+      offChainResolverArgs,
+    },
+    { gasPrice: ethers.utils.parseUnits("100", "gwei") }
+  );
 
   console.log("tx: ", res.tx);
   console.log("taskId: ", res.taskId);

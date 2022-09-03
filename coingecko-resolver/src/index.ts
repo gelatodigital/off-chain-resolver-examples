@@ -55,12 +55,12 @@ export function checker(args: Args_checker): CheckerResult {
   let usdVal = ethKey.getValue("usd");
   if (!usdVal) throw Error("No value: usd");
   let ethUsdString = usdVal.toString();
-  let ethUsdFlooredString = ethUsdString.slice(0, -3);
+  let ethUsdFlooredString = ethUsdString.split(".")[0];
 
   logInfo(`ethUsd: ${ethUsdFlooredString}`);
 
   let execData = Ethereum_Module.encodeFunction({
-    method: "function updatePrice(uint256) external",
+    method: "function updatePrice(uint256)",
     args: [ethUsdFlooredString],
   }).unwrap();
 
