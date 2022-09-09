@@ -771,10 +771,10 @@
     intl-messageformat-parser "6.4.2"
     tslib "^2.1.0"
 
-"@gelatonetwork/ops-sdk@2.0.5-beta":
-  version "2.0.5-beta"
-  resolved "https://registry.yarnpkg.com/@gelatonetwork/ops-sdk/-/ops-sdk-2.0.5-beta.tgz#2f963050752caf228b70fc94594e28da89ca026e"
-  integrity sha512-r6rXBVeHDfgr2wKP0+AIyWDmcYl1zTTmTADZw2PTQsXL7gTU18wQZ7SrHPzX8icWUl/2lftVeeQiNAjGLMW4EQ==
+"@gelatonetwork/ops-sdk@2.0.6-beta":
+  version "2.0.6-beta"
+  resolved "https://registry.yarnpkg.com/@gelatonetwork/ops-sdk/-/ops-sdk-2.0.6-beta.tgz#609d0756ffe10f4ef866c1906f7a6d6327e02ce9"
+  integrity sha512-kRDN5esPmeQAHZfWHKFsFSFAr+ZwyezgKlwJR84P1SnegimtrYCYHL9onjSaq9vXUaD1iEnjJ5sLEsrbvNEt7w==
   dependencies:
     "@msgpack/msgpack" "^2.7.2"
     axios "^0.24.0"
