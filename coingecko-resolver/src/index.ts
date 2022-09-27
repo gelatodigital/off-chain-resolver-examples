@@ -1,7 +1,7 @@
-import { BigInt, JSON } from "@polywrap/wasm-as";
+import { BigInt } from "@polywrap/wasm-as";
 import {
   Ethereum_Module,
-  Http_Module,
+  Coingecko_Module,
   Logger_Logger_LogLevel,
   Logger_Module,
 } from "./wrap";
@@ -41,18 +41,23 @@ export function checker(args: Args_checker): CheckerResult {
     return { canExec: false, execData: debugMessage };
   }
 
-  let res = Http_Module.get({
-    request: null,
-    url: "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-  }).unwrap();
+  let res = Coingecko_Module.simplePrice({
+    ids: "ethereum",
+    vs_currencies: "usd",
+    include_market_cap: null,
+    include_24hr_vol: null,
+    include_24hr_change: null,
+    include_last_updated_at: null
+  });
 
-  if (!res) throw Error("Get coingecko api failed");
-  let resObj = <JSON.Obj>JSON.parse(res.body);
+  if (res.isErr) throw Error("Get coingecko api failed");
 
-  let ethKey = resObj.getObj("ethereum");
+  let map = res.unwrap();
+
+  let ethKey = map.get("ethereum");
   if (!ethKey) throw Error("No key: ethereum");
 
-  let usdVal = ethKey.getValue("usd");
+  let usdVal = ethKey.get("usd");
   if (!usdVal) throw Error("No value: usd");
   let ethUsdString = usdVal.toString();
   let ethUsdFlooredString = ethUsdString.split(".")[0];

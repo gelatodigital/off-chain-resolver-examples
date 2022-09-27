@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PolywrapClient } from "@polywrap/client-js";
-import { ethereumPlugin } from "@polywrap/ethereum-plugin-js";
+import { ethereumPlugin, Connections, Connection } from "@polywrap/ethereum-plugin-js";
 
 const env = process.env;
 
@@ -12,10 +12,12 @@ const polywrapClient = new PolywrapClient({
     {
       uri: "ens/ethereum.polywrap.eth",
       plugin: ethereumPlugin({
-        networks: {
-          [chain]: { provider },
-        },
-        defaultNetwork: chain,
+        connections: new Connections({
+          networks: {
+            [chain]: new Connection({ provider }),
+          },
+          defaultNetwork: chain,
+        }),
       }),
     },
   ],
