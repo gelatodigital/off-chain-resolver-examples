@@ -1,7 +1,7 @@
 #import * into Ethereum from "wrap://ens/ethereum.polywrap.eth"
 #import * into Graph from "wrap://ens/graph-node.polywrap.eth"
 #import * into Logger from "wrap://ens/js-logger.polywrap.eth"
-#import * into Http from "wrap://ens/http.polywrap.eth"
+#import * into Coingecko from "wrap://ens/rinkeby/coingecko.defiwrapper.eth"
 
 type Module {
   checker(
