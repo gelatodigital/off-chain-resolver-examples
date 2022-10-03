@@ -30,30 +30,39 @@ export function checker(args: Args_checker): CheckerResult {
 
   logInfo(`nextUpdateTime: ${nextUpdateTime}, timeNow: ${timeNowSec}`);
 
-  if (timeNowSec.lt(nextUpdateTime)) {
-    let debugMessage = Ethereum_Module.solidityPack({
-      types: ["string"],
-      values: [
-        `Time not elapsed, nextUpdateTime: ${nextUpdateTime.toString()}`,
-      ],
-    }).unwrap();
-
-    return { canExec: false, execData: debugMessage };
-  }
+  if (timeNowSec.lt(nextUpdateTime))
+    return {
+      canExec: false,
+      execData: encodeMessage(
+        `Time not elapsed, nextUpdateTime: ${nextUpdateTime.toString()}`
+      ),
+    };
 
   let res = Http_Module.get({
     request: null,
     url: "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
   }).unwrap();
 
-  if (!res) throw Error("Get coingecko api failed");
+  if (!res)
+    return {
+      canExec: false,
+      execData: encodeMessage("Get coingecko api failed"),
+    };
   let resObj = <JSON.Obj>JSON.parse(res.body);
 
   let ethKey = resObj.getObj("ethereum");
-  if (!ethKey) throw Error("No key: ethereum");
+  if (!ethKey)
+    return {
+      canExec: false,
+      execData: encodeMessage("No key: ethereum"),
+    };
 
   let usdVal = ethKey.getValue("usd");
-  if (!usdVal) throw Error("No value: usd");
+  if (!usdVal)
+    return {
+      canExec: false,
+      execData: encodeMessage("No value: usd"),
+    };
   let ethUsdString = usdVal.toString();
   let ethUsdFlooredString = ethUsdString.split(".")[0];
 
@@ -72,4 +81,11 @@ function logInfo(msg: string): void {
     level: Logger_Logger_LogLevel.INFO,
     message: msg,
   });
+}
+
+function encodeMessage(msg: string): string {
+  return Ethereum_Module.solidityPack({
+    types: ["string"],
+    values: [msg],
+  }).unwrap();
 }

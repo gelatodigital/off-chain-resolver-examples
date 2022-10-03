@@ -7,7 +7,6 @@ import client from "./utils/client";
 
 jest.setTimeout(60000);
 
-const oracleAbi = ["function updatePrice(uint256) external"];
 const oracleAddress = "0x18d60894309C4Ef4902655b445De1Cb2faf4CB40"; //matic
 
 describe("Gelato simple resolver test", () => {

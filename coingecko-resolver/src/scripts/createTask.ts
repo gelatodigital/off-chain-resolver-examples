@@ -34,6 +34,7 @@ const main = async () => {
       execSelector,
       offChainResolverHash,
       offChainResolverArgs,
+      dedicatedMsgSender: true,
     },
     { gasPrice: ethers.utils.parseUnits("100", "gwei") }
   );

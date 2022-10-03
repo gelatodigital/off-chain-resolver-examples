@@ -32,3 +32,13 @@ type GelatoArgs {
   gasPrice: BigInt!
   timeStamp: BigInt!
 }
+
+type DataString {
+  errorMessage: String
+  data: String!
+}
+
+type DataBigInt {
+  errorMessage: String
+  data: BigInt!
+}

@@ -5,12 +5,10 @@ import {
   Logger_Module,
   Logger_Logger_LogLevel,
 } from "./wrap";
-import { Args_checker, CheckerResult } from "./wrap";
+import { Args_checker, CheckerResult, DataBigInt, DataString } from "./wrap";
 import { GelatoArgs } from "./wrap/GelatoArgs";
 import { UserArgs } from "./wrap/UserArgs";
 
-// polygon WETH : 0x7ceb23fd6bc0add59e62ac25578270cff1b9f619
-// polygon USDC : 0x2791bca1f2de4661ed88a30c99a7a9449aa84174
 export function checker(args: Args_checker): CheckerResult {
   let userArgs = UserArgs.fromBuffer(args.userArgsBuffer);
   let gelatoArgs = GelatoArgs.fromBuffer(args.gelatoArgsBuffer);
@@ -30,31 +28,46 @@ export function checker(args: Args_checker): CheckerResult {
   logInfo(`fromTokenAddress: ${fromTokenAddress}`);
   logInfo(`toTokenAddress: ${toTokenAddress}`);
   logInfo(`targetAddress: ${targetAddress}`);
-  let canExec = false;
 
-  let routerAddress = getRouterAddress(chainId);
-  let approveData = getApproveFromTokenData(
+  let routerRes = getRouterAddress(chainId);
+  let approveRes = getApproveFromTokenData(
     chainId,
     fromTokenAddress,
     fromTokenAmount
   );
 
-  let toTokenAmount = getQuote(
+  if (approveRes.errorMessage !== null)
+    return { canExec: false, execData: encodeMessage(approveRes.errorMessage) };
+
+  let quoteRes = getQuote(
     chainId,
     fromTokenAddress,
     toTokenAddress,
     fromTokenAmount
   );
 
-  if (toTokenAmount.lt(minToTokenAmount)) return { canExec, execData: "" };
+  if (quoteRes.errorMessage !== null)
+    return { canExec: false, execData: encodeMessage(quoteRes.errorMessage) };
 
-  let swapData = getSwapData(
+  let toTokenAmount = quoteRes.data;
+  if (toTokenAmount.lt(minToTokenAmount))
+    return {
+      canExec: false,
+      execData: encodeMessage("toTokenAmount < minTokenAmount"),
+    };
+
+  let swapDataRes = getSwapData(
     chainId,
     fromTokenAddress,
     toTokenAddress,
     fromTokenAmount,
     targetAddress
   );
+  if (swapDataRes.errorMessage !== null)
+    return {
+      canExec: false,
+      execData: encodeMessage(swapDataRes.errorMessage),
+    };
 
   /*   
   function approveAndSwap(
@@ -66,13 +79,15 @@ export function checker(args: Args_checker): CheckerResult {
 
   let execData = Ethereum_Module.encodeFunction({
     method: "function approveAndSwap(address,address,bytes,bytes) external",
-    args: [fromTokenAddress, routerAddress, approveData, swapData],
+    args: [fromTokenAddress, routerRes.data, approveRes.data, swapDataRes.data],
   }).unwrap();
 
   return { canExec: true, execData: execData };
 }
 
-function getRouterAddress(chainId: string): string {
+function getRouterAddress(chainId: string): DataString {
+  let routerAddress = "";
+
   let routerApi = `https://api.1inch.io/v4.0/${chainId}/approve/spender`;
   let routerApiRes = Http_Module.get({
     request: null,
@@ -83,22 +98,26 @@ function getRouterAddress(chainId: string): string {
     "address": "0x1111111254fb6c44bac0bed2854e76f90643097d"
   } */
 
-  if (!routerApiRes) throw Error("Get router api failed");
+  if (!routerApiRes)
+    return { errorMessage: "Get router api failed", data: routerAddress };
   let routerResObj = <JSON.Obj>JSON.parse(routerApiRes.body);
 
   let routerAddressJson = routerResObj.getValue("address");
-  if (!routerAddressJson) throw Error("No routerAddressJson");
-  let routerAddress = routerAddressJson.toString();
+  if (!routerAddressJson)
+    return { errorMessage: "No routerAddressJson", data: routerAddress };
+
+  routerAddress = routerAddressJson.toString();
 
   logInfo(`routerAddress: ${routerAddress}`);
-  return routerAddress;
+  return { errorMessage: null, data: routerAddress };
 }
 
 function getApproveFromTokenData(
   chainId: string,
   fromTokenAddress: string,
   fromTokenAmount: BigInt
-): string {
+): DataString {
+  let approveData = "";
   let approveApi = `https://api.1inch.io/v4.0/${chainId}/approve/transaction?tokenAddress=${fromTokenAddress}&amount=${fromTokenAmount.toString()}`;
   let approveApiRes = Http_Module.get({
     request: null,
@@ -113,15 +132,18 @@ function getApproveFromTokenData(
     "value": "0"
   } */
 
-  if (!approveApiRes) throw Error("Get approve api failed");
+  if (!approveApiRes)
+    return { errorMessage: "Get approve api failed", data: approveData };
   let approveResObj = <JSON.Obj>JSON.parse(approveApiRes.body);
 
   let approveDataJson = approveResObj.getValue("data");
-  if (!approveDataJson) throw Error("No approveDataJson");
-  let approveData = approveDataJson.toString();
+  if (!approveDataJson)
+    return { errorMessage: "No approveDataJson", data: approveData };
+
+  approveData = approveDataJson.toString();
 
   logInfo(`approveData: ${approveData}`);
-  return approveData;
+  return { errorMessage: null, data: approveData };
 }
 
 function getQuote(
@@ -129,7 +151,8 @@ function getQuote(
   fromTokenAddress: string,
   toTokenAddress: string,
   fromTokenAmount: BigInt
-): BigInt {
+): DataBigInt {
+  let quote = BigInt.ZERO;
   let quoteApi = `https://api.1inch.io/v4.0/${chainId}/quote?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${fromTokenAmount.toString()}`;
   let quoteApiRes = Http_Module.get({
     request: null,
@@ -142,17 +165,19 @@ function getQuote(
     "estimatedGas": 958962
   } */
 
-  if (!quoteApiRes) throw Error("Get quote api failed");
+  if (!quoteApiRes)
+    return { errorMessage: "Get quote api failed", data: quote };
   let quoteResObj = <JSON.Obj>JSON.parse(quoteApiRes.body);
 
   let quoteResJson = quoteResObj.getValue("toTokenAmount");
-  if (!quoteResJson) throw Error("No quoteResJson");
+  if (!quoteResJson) return { errorMessage: "No quoteResJson", data: quote };
+
   let quoteRes = quoteResJson.toString();
 
-  let toTokenAmount = BigInt.fromString(quoteRes);
+  quote = BigInt.fromString(quoteRes);
 
-  logInfo(`toTokenAmount: ${toTokenAmount}`);
-  return toTokenAmount;
+  logInfo(`toTokenAmount: ${quote}`);
+  return { errorMessage: null, data: quote };
 }
 
 function getSwapData(
@@ -161,7 +186,9 @@ function getSwapData(
   toTokenAddress: string,
   fromTokenAmount: BigInt,
   targetAddress: string
-): string {
+): DataString {
+  let swapData = "";
+
   let slippage = "3";
   let swapApi = `https://api.1inch.io/v4.0/${chainId}/swap?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${fromTokenAmount}&fromAddress=${targetAddress}&slippage=${slippage}`;
 
@@ -170,15 +197,21 @@ function getSwapData(
     url: swapApi,
   });
 
-  if (!res || res.isErr) throw Error("Get swap api failed");
+  if (!res || res.isErr)
+    return {
+      errorMessage: "Get swap api failed",
+      data: swapData,
+    };
   let swapApiRes = res.unwrap();
-  if (!swapApiRes) throw Error("Get swap api res failed");
+  if (!swapApiRes)
+    return { errorMessage: "Get swap api res failed", data: swapData };
 
   let swapResObj = <JSON.Obj>JSON.parse(swapApiRes.body);
-  if (swapApiRes.status == 400) {
-    let errDescription = swapResObj.getValue("description");
-    throw Error(`Get swap api error: ${errDescription}`);
-  }
+  if (swapApiRes.status == 400)
+    return {
+      errorMessage: "Swap api error 400",
+      data: swapData,
+    };
 
   /*
   { 
@@ -198,16 +231,27 @@ function getSwapData(
   } */
 
   let txObj = swapResObj.getObj("tx");
-  if (!txObj) throw Error("No txObj");
+  if (!txObj) return { errorMessage: "No tx obj", data: swapData };
 
   let swapDataJson = txObj.getValue("data");
-  if (!swapDataJson) throw Error("No swapDataJson");
-  let swapData = swapDataJson.toString();
+  if (!swapDataJson) return { errorMessage: "No swapDataJson", data: swapData };
+
+  swapData = swapDataJson.toString();
 
   logInfo(`swapData: ${swapData}`);
-  return swapData;
+  return { errorMessage: null, data: swapData };
 }
 
 function logInfo(msg: string): void {
   Logger_Module.log({ message: msg, level: Logger_Logger_LogLevel.INFO });
+}
+
+function encodeMessage(msg: string | null): string {
+  if (msg !== null)
+    return Ethereum_Module.solidityPack({
+      types: ["string"],
+      values: [msg],
+    }).unwrap();
+
+  return "";
 }
