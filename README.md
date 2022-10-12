@@ -16,13 +16,13 @@ Updates eth-usd price on a oracle contract every x minutes.
 
 ## Install Dependencies
 
-`nvm install && nvm use`  
-`yarn`
+- `nvm install && nvm use`
+- `yarn`
+- `docker`
 
 ## Build
-Make sure to have `docker` running.
 
-`yarn build`
+Make sure to have `docker` running and do `yarn build`
 
 ## Test
 
